@@ -153,31 +153,16 @@ with tab3:
         key = "multiselect_tab2"
     )
     
-    humans_df = for_later[(for_later['country_code'] == 'US')]
-
-    json_df = pd.read_json("entity_results2.jsonl", lines=True)
-    json_df["instance_of"] = json_df["attributes"].apply(
-        lambda x: x.get("instance of") if isinstance(x, dict) else np.nan
-    )
+    humans_df = pd.read_csv("human-data.csv")
 
 
     st.write("I am still working on generating visualizations for my text classification, but right now I have the pageviews for the US for articles about humans")
-    json_df = json_df.rename(columns={'QID': 'qid'})
+    humans_grouped = humans_df.groupby(["date", "country_code"])['pageviews'].sum().reset_index()
+
+    countries_humans = humans_grouped[humans_grouped["country_code"].isin(selected_country2)]
 
 
-    to_merge = json_df[["qid", "instance_of"]]
-    merged = humans_df.merge(to_merge, on="qid", how="left")
-
-    #st.write(merged.head())
-    #but I just want the ones about humans and I just want to average them by day
-
-    humans = merged[merged['instance_of'] == 'human']
-    humans = humans.groupby(["date", "country_code"])['pageviews'].sum().reset_index()
-
-    countries_humans = humans[humans["country_code"].isin(selected_country2)]
-
-
-    fig3 = px.line(
+    fig_humans = px.line(
         countries_humans, 
         x='date', 
         y='pageviews', 
@@ -187,6 +172,18 @@ with tab3:
     )
 
     st.title("Pageviews per Country for Top Articles about Humans per Day")
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(fig_humans, use_container_width=True)
 
+with tab4:
+    st.header("Do I need this page?")
+
+with tab5:
+    st.header("Summary and Ethical Considerations")
+    st.subheader("What are the takeaways from your investigation? ")
+    st.write("What are some limitations of your approach? How confident are you that the results are reliable? Are there any ethical concerns about this research? Did you expose any biases in the human activity data?")
+
+    st.subheader("Zero-Shot Learning Classification Accuracy:")
+    st.write("I evaluated my zero-shot learning classifier on the initial classification of data since I had the ground truth for those entries from the wikidata and could easily assess the accuracy")
+    st.write("Here are the results I got from that:")
+    st.write("* I have the data I need to evaluate my zero shot learning, I just need to write up that code and then put it here with my confusion matrices and such")
 #I haven't labelled any country besides US, so rn this only works for US

@@ -4,3 +4,9 @@ final-project-data2.csv
 top5000_each.csv
 final-project-qids.csv
 missing_qids.jsonl
+US_text_classification.csv
+JP_text_classification.csv
+GB_text_classification.csv
+IN_text_classification.csv
+DE_text_classification.csv
+human-data.csv
