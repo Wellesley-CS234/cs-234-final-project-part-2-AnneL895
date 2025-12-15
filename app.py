@@ -154,11 +154,11 @@ with tab3:
         key = "multiselect_tab2"
     )
     
-    humans_df = pd.read_csv("human-data.csv")
+    humans_grouped = pd.read_csv("text_classification_figures.csv")
 
 
     st.write("I am still working on generating visualizations for my text classification, but right now I have the pageviews for the US for articles about humans")
-    humans_grouped = humans_df.groupby(["date", "country_code"])['pageviews'].sum().reset_index()
+    #humans_grouped = humans_df.groupby(["date", "country_code"])['pageviews'].sum().reset_index()
     st.write(humans_grouped.head())
 
     countries_humans = humans_grouped[humans_grouped["country_code"].isin(selected_country2)]
