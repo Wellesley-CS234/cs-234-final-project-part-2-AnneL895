@@ -154,6 +154,12 @@ with tab2:
 
         st.write("These graphs give us better insight into the interaction with Wikipedia by different countries as a whole.")
 
+        st.write("We can also take a look at what the top articles were:")
+
+        topdf = pd.read_csv("top25articles_per_country.csv")
+
+        st.write(topdf)
+        
 
 with tab3:
     st.write("Now that we have all our pageview data, we can focus in on the classifiers I chose: person, place, event, tv/film, as well as the subgroups of historical vs pop culture for humans.")
@@ -256,6 +262,12 @@ with tab3:
 
     st.metric("Pop Culture", f"{avg_pop_culture:.3f}")
     st.metric("Historical ", f"{avg_historical:.3f}")
+
+    st.write("We can also take a look at the top articles about humans for each country:")
+
+    tophumansdf = pd.read_csv("top25articles_humans.csv")
+
+    st.write(tophumansdf)
 
 
 
