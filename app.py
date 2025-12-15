@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import altair as alt
 import plotly.express as px
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 st.title("CS234 Final Project")
 st.subheader("Analyzing the Most Viewed Articles in March 2023 for 5 Countries ")
@@ -44,10 +46,8 @@ with tab2:
 
     st.write("This is what my dataframe looks like:")
     #load my dataframe
-    df = pd.read_csv("final-project-data2.csv")
+    df = pd.read_csv("basic_pageview_data_fig1,2.csv")
 
-    #Line graph with the pageviews for the top articles over the course of the month
-    #Interactive part: be able to select countries to look at
     st.write(df.head())
 
     countries = ["US", "JP", "IN", "DE", "GB"]
@@ -59,8 +59,9 @@ with tab2:
 
     countrydf = df[df["country_code"].isin(selected_country)]
     countrydf = countrydf.sort_values(by='date', ascending=False)
-    for_later = df.groupby(['date', "country_code", "qid"])['pageviews'].sum().reset_index()
-    countrydf = countrydf.groupby(['date', "country_code"])['pageviews'].sum().reset_index()
+    #for_later = df.groupby(['date', "country_code", "qid"])['pageviews'].sum().reset_index()
+    #countrydf = countrydf.groupby(['date', "country_code"])['pageviews'].sum().reset_index()
+    st.write(countrydf.head())
 
     #what is the type of the data column in my dataframe?
     countrydf["date"] = pd.to_datetime(countrydf["date"])
@@ -84,7 +85,7 @@ with tab2:
     st.plotly_chart(fig, use_container_width=True)
 
 
-    pageviews_df = for_later.groupby(["country_code"])['pageviews'].sum().reset_index()
+    pageviews_df = df.groupby(["country_code"])['pageviews'].sum().reset_index()
     #bar graph time
     fig2 = px.bar(
         pageviews_df, 
@@ -124,7 +125,7 @@ with tab2:
         st.plotly_chart(fig_standardize, use_container_width=True)
 
 
-        pageviews_df = for_later.groupby(["country_code"])['pageviews'].sum().reset_index()
+        pageviews_df = df.groupby(["country_code"])['pageviews'].sum().reset_index()
         pageviews_df.loc[pageviews_df['country_code'] == 'US', 'pageviews'] = pageviews_df['pageviews'] / 342970425
         pageviews_df.loc[pageviews_df['country_code'] == 'JP', 'pageviews'] = pageviews_df['pageviews'] / 122809409
         pageviews_df.loc[pageviews_df['country_code'] == 'GB', 'pageviews'] = pageviews_df['pageviews'] / 69739901
@@ -158,6 +159,7 @@ with tab3:
 
     st.write("I am still working on generating visualizations for my text classification, but right now I have the pageviews for the US for articles about humans")
     humans_grouped = humans_df.groupby(["date", "country_code"])['pageviews'].sum().reset_index()
+    st.write(humans_grouped.head())
 
     countries_humans = humans_grouped[humans_grouped["country_code"].isin(selected_country2)]
 
@@ -174,6 +176,87 @@ with tab3:
     st.title("Pageviews per Country for Top Articles about Humans per Day")
     st.plotly_chart(fig_humans, use_container_width=True)
 
+    st.header("This is where I am working now")
+    #First I want to graph the percentages of person, place, event, or tv for each country
+    #then I want to focus in on the people articles for each country and see if they are about pop culture or historical figures
+    st.write("OMG, another cool visualization:")
+
+    # Example: Load your CSVs for different countries
+    US_df = pd.read_csv('US_daily_category_pct.csv', parse_dates=['date']).set_index('date')
+    JP_df = pd.read_csv('JP_daily_category_pct.csv', parse_dates=['date']).set_index('date')
+    GB_df = pd.read_csv('GB_daily_category_pct.csv', parse_dates=['date']).set_index('date')
+    IN_df = pd.read_csv('IN_daily_category_pct.csv', parse_dates=['date']).set_index('date')
+    DE_df = pd.read_csv('DE_daily_category_pct.csv', parse_dates=['date']).set_index('date')
+
+    # Put them in a dictionary for easy access
+    country_dfs = {
+        "US": US_df,
+        "JP": JP_df,
+        "GB": GB_df,
+        "IN": IN_df,
+        "DE": DE_df
+    }
+
+    selected_country4 = st.selectbox(
+        "Now, let's pick a country to focus on",
+        countries2,
+        key = "select_box2"
+    )
+    df_pct = country_dfs[selected_country4]
+    
+    
+    #graphing part
+    st.subheader("Custom Matplotlib Plot")
+    fig_pct, ax = plt.subplots(figsize=(12, 6))
+    df_pct.plot.area(ax=ax, cmap='tab20', alpha=0.8)
+    ax.set_ylabel("Percentage of Pageviews")
+    ax.set_xlabel("Date")
+    ax.set_title("Daily Pageviews by Article Category (Percentage)")
+    ax.legend(title="Category")
+    st.pyplot(fig_pct)
+
+    #Next figure
+    st.header("Now it's time to focus on my last part of this project")
+    st.subheader("I want to use my text classifier to label whether these people are related to pop culture and currect events or whether they are historical")
+
+    humans_classification = pd.read_csv("human_classification_daily_category_pct.csv")
+    st.write(humans_classification.head())
+
+    countries2 = humans_classification['country_code'].unique() 
+    
+    selected_country5 = st.selectbox(
+        "Now, let's pick a country to focus on",
+        countries2,
+        key="select_box3"
+    )
+    classification_to_graph = humans_classification[humans_classification["country_code"] == selected_country5]
+
+    classification_to_graph = classification_to_graph.set_index('date')
+    st.write(classification_to_graph.head())
+
+    category_columns = ['historical', 'pop culture']
+
+    st.subheader("Classification Plot")
+    fig_classification, ax = plt.subplots(figsize=(12, 6))
+    classification_to_graph[category_columns].plot.area(ax=ax, cmap='tab20', alpha=0.8)
+    ax.set_ylabel("Percentage of Articles")
+    ax.set_xlabel("Date")
+    ax.set_title("Daily Pageviews by Article Category (Percentage)")
+    ax.legend(title="Category")
+    st.pyplot(fig_classification)
+
+    st.write(humans_classification.head())
+    avg_historical = humans_classification['historical'].mean()
+    avg_pop_culture = humans_classification['pop culture'].mean()
+
+    # If you only have one month or want the latest month:
+
+    st.subheader(f"Metrics for {selected_country5}")
+
+    st.metric("Percent Pop Culture", f"{avg_pop_culture:.3f}")
+    st.metric("Percent Historical ", f"{avg_historical:.3f}")
+
+
 with tab4:
     st.header("Do I need this page?")
 
@@ -187,3 +270,61 @@ with tab5:
     st.write("Here are the results I got from that:")
     st.write("* I have the data I need to evaluate my zero shot learning, I just need to write up that code and then put it here with my confusion matrices and such")
 #I haven't labelled any country besides US, so rn this only works for US
+
+    st.subheader("Visualizations for Assessing Zero Shot Learning")
+    country_stats = pd.read_csv("country_stats.csv")
+    st.write(country_stats)
+
+    selected_country3 = st.selectbox(
+        "Now, let's pick a country to focus on",
+        country_stats["country"].unique()
+    )
+
+    normalize = st.toggle("Normalize confusion matrix", value=False)
+
+    row = country_stats[country_stats["country"] == selected_country3].iloc[0]
+
+    cm = np.array([
+        [row["TP"], row["FN"]],
+        [row["FP"], row["TN"]]
+    ], dtype=float)
+
+    if normalize:
+        cm = cm / cm.sum(axis=1, keepdims=True)
+        fmt = ".2f"
+    else:
+        fmt = "d"
+        cm = cm.astype(int)
+
+    fig, ax = plt.subplots(figsize=(4, 3))
+
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt=".2f" if normalize else "d",
+        cmap="Blues",
+        cbar=False,
+        ax=ax,
+        xticklabels=["Person", "Not Person"],
+        yticklabels=["Person", "Not Person"]
+    )
+
+    ax.set_xlabel("Predicted")
+    ax.set_ylabel("Actual")
+
+    title = f"Confusion Matrix — {selected_country3}"
+    if normalize:
+        title += " (Normalized)"
+
+    ax.set_title(title)
+
+    st.pyplot(fig)
+    plt.close(fig)
+
+    st.subheader("Metrics")
+
+    st.metric("Precision", f"{row['precision']:.3f}")
+    st.metric("Recall", f"{row['recall']:.3f}")
+    st.metric("Accuracy", f"{row['accuracy']:.3f}")
+
+

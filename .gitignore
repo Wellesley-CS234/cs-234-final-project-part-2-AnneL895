@@ -10,3 +10,5 @@ GB_text_classification.csv
 IN_text_classification.csv
 DE_text_classification.csv
 human-data.csv
+human_classification.csv
+human_qids.csv
