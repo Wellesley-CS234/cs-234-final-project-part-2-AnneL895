@@ -45,6 +45,10 @@ with tab1:
     st.write("For articles from the US, GB, and India, most articles were written in English, so I was able to use the facebook/bart-large-mnli text classifier on those data sets.")
     st.write("For the German articles, I used the joeddav/xlm-roberta-large-xnli classifier")
     st.write("And for the Japanese articles, I used the MoritzLaurer/mDeBERTa-v3-base-mnli-xnli classifier")
+    st.write("Data Statistice:")
+    st.metric("QIDs, 1500")
+    st.metric("Countries, 5")
+    
     
     #Provide some descriptive statistics for the features of your dataset.
     st.subheader("New Features:")
