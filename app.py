@@ -11,7 +11,7 @@ st.title("CS234 Final Project")
 st.subheader("Analyzing the Most Viewed Articles in March 2023 for 5 Countries ")
 st.write("For this project, I decided to look at the most viewed articles for the top 5 countries that use Wikipedia. Those countries include the US, Japan, Great Britain (Wikipedia groups England, Scotland, and Wales), India, and Germany.")
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Introduction", "Basic Pageview Data", "Text Classification", "Hypothesis Testing", "Summary & Ethical Considerations"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Introduction", "Basic Pageview Data", "Text Classification", "Hypothesis Testing", "Summary & Ethical Considerations", "Exploring Languages"])
 
 full_countries = {
     "US": "United States",
@@ -24,15 +24,10 @@ full_countries = {
 with tab1:
     st.title("Introduction")
     st.subheader("My Research Question:")
-    st.write("For this project I initially started by looking at the top articles for the top 5 countries that use Wikipedia.")
-    st.write("When I got the Wikidata for these articles, I noticed that the top categories for articles were person, place, event, or tv/film. From there, I decided to test 3 zero-shot classifiers by having them label Wikipedia articles just based on their names as one of the four top categories.")
-    st.write("(You can see the results of this step on my Summary and Ethical Condiserations tab)")
-    st.write("But I had the ground truth for all of these articles from the Wikidata, so I could have labelled them myself. To do some real text classification, I decided to focus in on the articles about people, since these made up the majority of articles accross countries.")
-    st.write("My research question ended up being: Do Wikipedia users from the top 5 countries that interact with Wikipedia prefer to read articles about historical figures or people featured in current pop culture?")
-
+    st.write("Do people in the 5 countries that use Wikipedia the most prefer to read articles about historical or current figures?")
 
     st.subheader("My Hypothesis:")
-    st.write("My hypothesis was that the top Wikipedia using countries would be most interested in people featured in current pop culture.")
+    st.write("People in the top Wikipedia using countries would be most interested in people current figures.")
     
     st.subheader("Data Summary:")
     st.markdown("For this project, I wanted to focus on the top 5 countries that interact with Wikipedia articles, namely:")
@@ -55,8 +50,12 @@ with tab1:
     st.write("For this project, I used API calls to Wikidata in order to get labels for all the qids I collected from my articles.")
     st.write("In total, I got wikidata on around 18,000 qids which took around 14 hours total.")
     st.write("My first text classification included labelling articles as about a person, place, event, or as related to tv/film  (the most common labels I saw in my wikidata under 'instance of') in order to evaluate the accuracy on the models I was using.")
+    st.write("(You can see the results of this step on my Summary and Ethical Condiserations tab)")
+    
+
     st.write("Based on my findings from this preliminary text classification, I labelled all my data one of the 4 categories.")
     st.write("From there, I focused on the articles about people and used the wikidata I had gathered about all my qids to find descriptions for each person. Next, I used the text classifier I used earlier for English language text classification to now label my articles about humans as either historical or current figures. Because the wikidata was in English, I converted my Japanese and German label into English to make the process easier.")
+    st.write("The labels I got from the first round to text classification were not very accurate, so I used the 'instance of' label in my Wikidata to find the articles that were actually about humans and used that data for my second round of text classification. ")
 
     st.write("I hope you enjoy exploring the data I collected over the course of this project and my findings!")
     
@@ -72,8 +71,9 @@ with tab2:
 
     countries = ["US", "JP", "IN", "DE", "GB"]
 
+    st.subheader("Pick a country to focus on")
     selected_country = st.multiselect(
-        "Now, let's pick a country to focus on:",
+        "Select here:",
         options = countries,
     )
 
@@ -170,8 +170,9 @@ with tab3:
 
     countries2 = ["US", "JP", "IN", "DE", "GB"]
 
+    st.subheader("Pick a country to focus on")
     selected_country2 = st.multiselect(
-        "Pick a country to focus on",
+        "Select here:",
         options = countries2,
         key = "multiselect_tab2"
     )
@@ -212,8 +213,9 @@ with tab3:
         "DE": DE_df
     }
 
+    st.subheader("Pick a country to focus on")
     selected_country4 = st.selectbox(
-        "Pick a country to focus on",
+        "Select here:",
         countries2,
         key = "select_box2"
     )
@@ -234,7 +236,7 @@ with tab3:
     #Next figure
     st.write("Now that we've explored some data related to our first 4 classifiers, let's take a closer look at the articles about humans.")
     
-    humans_classification = pd.read_csv("human_classification_daily_category_pct.csv")
+    humans_classification = pd.read_csv("human_classification_daily_category_pct2.csv")
 
     countries2 = humans_classification['country_code'].unique() 
     
@@ -247,7 +249,7 @@ with tab3:
 
     classification_to_graph = classification_to_graph.set_index('date')
 
-    category_columns = ['historical', 'pop culture']
+    category_columns = ['historical', 'current']
 
     st.subheader(f"Daily Pageviews by Article Category (Percentage) for {full_countries[selected_country5]}")
     fig_classification, ax = plt.subplots(figsize=(12, 6))
@@ -258,18 +260,18 @@ with tab3:
     st.pyplot(fig_classification)
 
     avg_historical = humans_classification['historical'].mean()
-    avg_pop_culture = humans_classification['pop culture'].mean()
+    avg_current = humans_classification['current'].mean()
 
     # If you only have one month or want the latest month:
 
     st.subheader(f"Metrics for {full_countries[selected_country5]}")
 
-    st.metric("Pop Culture", f"{avg_pop_culture:.3f}")
+    st.metric("Current", f"{avg_current:.3f}")
     st.metric("Historical ", f"{avg_historical:.3f}")
 
     st.write("We can also take a look at the top articles about humans for each country:")
 
-    tophumansdf = pd.read_csv("top25articles_humans.csv")
+    tophumansdf = pd.read_csv("top25articles_humans2.csv")
 
     st.write(tophumansdf)
 
@@ -294,13 +296,11 @@ with tab4:
     st.pyplot(fig_classification2)
 
     avg_historical2 = humans_classification['historical'].mean()
-    avg_pop_culture2 = humans_classification['pop culture'].mean()
+    avg_current2 = humans_classification['current'].mean()
 
     st.subheader("Findings:")
-    st.write("Although my hypothesis was that people would generally be more interested in reading about figures in pop culture in turns out that the majority of articles interacted with about humans were actually about historical figures.")
-    st.write("This was quite suprising to me especially because of how strongly in favor of articles about historical figures the countries were.")
-    st.write("This data doesn't support my hypothesis and suggests that people are more intersted in reading about histrorical figures then current figures (at least in these countries for the month of March 2023).")
-
+    st.write("Based on these graphs, you can see that my hypothesis that people in the top 5 countries that most use Wikipedia prefer to read articles about current figures rather than historical ones. It makes sense that people would be more interested in learning more about people they may have seen featured on the news or starring in a recent movie more than a historical figure.")
+    st.write("It is important to consider though that the label for current figures is not the strictest because it does include everyone who is currently alive (if birth dates are included in the Wikipedia data), so some of the figures labelled current may not be as culturally important at this specific time. ")
 with tab5:
     st.header("Summary and Ethical Considerations")
     st.subheader("What are the takeaways from your investigation? ")
@@ -380,5 +380,58 @@ with tab5:
     st.metric("Accuracy", f"{row['accuracy']:.3f}")
 
     st.write("As you can see, there are differences in the metrics for different countries and different classifiers, with the classification of articles from Great Britain having the worst accuracy. This was suprising to me since I used the same classifier on Great Britain, and US, and India, and the other two countries have a significantly higher accuracy. I am not sure why this is the case, and if I had more time, I think it would have been interesting to dive more into this aspect of the project to understand what happened with this text classifier.")
+
+with tab6:
+    st.write("Another interesting part of this project was seeing what langauges were present in different Wikipedias. Here, I will explore some of that data. ")
+
+    US_lang_counts_df = pd.read_csv("US_lang_counts_df.csv")
+    JP_lang_counts_df = pd.read_csv("JP_lang_counts_df.csv")
+    GB_lang_counts_df = pd.read_csv("GB_lang_counts_df.csv")
+    IN_lang_counts_df = pd.read_csv("IN_lang_counts_df.csv")
+    DE_lang_counts_df = pd.read_csv("DE_lang_counts_df.csv")
+
+    country_data = {
+        "US": US_lang_counts_df,
+        "JP": JP_lang_counts_df,
+        "GB": GB_lang_counts_df,
+        "IN": IN_lang_counts_df,
+        "DE": DE_lang_counts_df
+    }   
+
+    selected_country = st.selectbox(
+        "Select a country:", 
+        list(country_data.keys())
+    )
+
+    df_langs_display = country_data[selected_country]
+
+    st.write(f"Language counts for {selected_country}:")
+
+
+    all_langs = px.bar(df_langs_display, x='Language', y='Count',
+             title='Number of Articles per Language',
+             labels={'Language': 'Language', 'Count': 'Number of Articles'},
+             color='Language')
+
+    st.plotly_chart(all_langs)
+
+    st.write("We can also look at this:")
+
+    combined_df_condensed = pd.read_csv("combined_df_condensed.csv")
+
+    combined_langs = px.bar(
+        combined_df_condensed,
+        x='Country',
+        y='Count',
+        color='Language',
+        barmode='group',  # makes bars side by side
+        title='Language Counts by Country',
+        labels={'Count': 'Number of Articles', 'Country': 'Country', 'Language': 'Language'}
+    )
+
+    st.plotly_chart(combined_langs)
+
+
+
 
 
