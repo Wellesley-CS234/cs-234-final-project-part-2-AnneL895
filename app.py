@@ -11,7 +11,7 @@ st.title("CS234 Final Project")
 st.subheader("Analyzing the Most Viewed Articles in March 2023 for 5 Countries ")
 st.write("For this project, I decided to look at the most viewed articles for the top 5 countries that use Wikipedia. Those countries include the US, Japan, Great Britain (Wikipedia groups England, Scotland, and Wales), India, and Germany.")
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Introduction", "Basic Pageview Data", "Text Classification", "Hypothesis Testing", "Summary & Ethical Considerations", "Exploring Languages"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Introduction", "Basic Pageview Data", "Text Classification", "Hypothesis Testing", "Summary & Ethical Considerations", "Extra: Exploring Languages"])
 
 full_countries = {
     "US": "United States",
@@ -181,7 +181,7 @@ with tab2:
         
 
 with tab3:
-    st.write("Now that we have all our pageview data, we can focus in on the classifiers I chose: person, place, event, tv/film, as well as the subgroups of historical vs pop culture for humans.")
+    st.write("Now that we have all our pageview data, we can focus in on the categories I chose: person, place, event, tv/film, as well as the subgroups of historical vs pop culture for humans.")
 
     countries2 = ["US", "JP", "IN", "DE", "GB"]
 
@@ -211,7 +211,7 @@ with tab3:
 
     #First I want to graph the percentages of person, place, event, or tv for each country
     #then I want to focus in on the people articles for each country and see if they are about pop culture or historical figures
-    st.write("While it is interesting to generally look at the pageviews per country for articles about humans, it's difficult to contextualize that information. Let's compare the number of articles about humans for each country to the number of articles about other classifiers.")
+    st.write("While it is interesting to generally look at the pageviews per country for articles about humans, it's difficult to contextualize that information. Let's compare the number of articles about humans for each country to the number of articles about other categories.")
 
     # Example: Load your CSVs for different countries
     US_df = pd.read_csv('US_daily_category_pct.csv', parse_dates=['date']).set_index('date')
@@ -312,7 +312,7 @@ with tab3:
     st.metric("Recall", f"{row['recall']:.3f}")
     st.metric("Accuracy", f"{row['accuracy']:.3f}")
 
-    st.write("As you can see, there are differences in the metrics for different countries and different classifiers, with the classification of articles from Great Britain having the worst accuracy. This was suprising to me since I used the same classifier on Great Britain, and US, and India, and the other two countries have a significantly higher accuracy. I am not sure why this is the case, and if I had more time, I think it would have been interesting to dive more into this aspect of the project to understand what happened with this text classifier.")
+    st.write("As you can see, there are differences in the metrics for different countries and different categories, with the classification of articles from Great Britain having the worst accuracy. This was suprising to me since I used the same text classifier on Great Britain, and US, and India, and the other two countries have a significantly higher accuracy. I am not sure why this is the case, and if I had more time, I think it would have been interesting to dive more into this aspect of the project to understand what happened with this text classifier.")
 
 
 with tab4:
@@ -361,7 +361,7 @@ with tab4:
 
 
     st.subheader("Findings:")
-    st.write("Based on these graphs, you can see that my hypothesis that people in the top 5 countries that most use Wikipedia prefer to read articles about current figures rather than historical ones. It makes sense that people would be more interested in learning more about people they may have seen featured on the news or starring in a recent movie more than a historical figure.")
+    st.write("Based on these graphs, you can see that my hypothesis that people in the top 5 countries that most use Wikipedia prefer to read articles about current figures rather than historical ones is correct. It makes sense that people would be more interested in learning more about people they may have seen featured on the news or starring in a recent movie more than a historical figure.")
     st.write("It is important to consider though that the label for current figures is not the strictest because it does include everyone who is currently alive (if birth dates are included in the Wikipedia data), so some of the figures labelled current may not be as culturally important at this specific time. ")
 with tab5:
     st.header("Summary and Ethical Considerations")
