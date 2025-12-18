@@ -24,7 +24,7 @@ full_countries = {
 with tab1:
     st.title("Introduction")
     st.subheader("My Research Question:")
-    st.write("Do people in the 5 countries that use Wikipedia the most prefer to read articles about historical or current figures?")
+    st.write("Do people in the top 5 countries that use Wikipedia the most prefer to read articles about historical or current figures?")
 
     st.subheader("My Hypothesis:")
     st.write("People in the top Wikipedia using countries would be most interested in people current figures.")
